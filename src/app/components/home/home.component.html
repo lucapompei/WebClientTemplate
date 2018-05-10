@@ -1,0 +1,22 @@
+<div class="homeContainer">
+    <mat-accordion>
+        <!-- Elements panel -->
+        <mat-expansion-panel [expanded]="true">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    {{ "elements" | translate }}
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <app-elements></app-elements>
+        </mat-expansion-panel>
+        <!-- USers panel -->
+        <mat-expansion-panel>
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    {{ "users" | translate }}
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <app-users></app-users>
+        </mat-expansion-panel>
+    </mat-accordion>
+</div>

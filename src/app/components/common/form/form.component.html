@@ -1,0 +1,31 @@
+<form>
+  <ng-container *ngFor="let field of fields">
+    <mat-checkbox *ngIf="field.type === fieldTypeEnum.BOOLEAN" [(ngModel)]="field.value" name="{{field.key}}" [disabled]="!field.isEnabled">
+      {{ field.title | translate }}
+      <span *ngIf="field.isEnabled && field.isRequired"> *</span>
+    </mat-checkbox>
+    <mat-form-field *ngIf="field.type === fieldTypeEnum.SELECT">
+      <mat-select [(value)]="field.value" placeholder="{{field.title | translate}}{{ field.isEnabled && field.isRequired ? ' *' : ''}}"
+        [disabled]="!field.isEnabled">
+        <mat-option></mat-option>
+        <mat-option *ngFor="let option of field.values" [value]="option" [attr.selected]="option === field.value ? 'selected' : ''">
+          {{ option }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field *ngIf="field.type === fieldTypeEnum.CONFIRM_PASSWORD || field.type === fieldTypeEnum.EMAIL || field.type === fieldTypeEnum.NUMBER || field.type === fieldTypeEnum.PASSWORD || field.type === fieldTypeEnum.PHONE || field.type === fieldTypeEnum.STRING">
+      <input matInput [type]="(field.type === fieldTypeEnum.CONFIRM_PASSWORD || field.type === fieldTypeEnum.PASSWORD) ? 'password' : (field.type === fieldTypeEnum.EMAIL ? 'email' : (field.type === fieldTypeEnum.NUMBER ? 'number' : 'text'))"
+        placeholder="{{field.title | translate}}{{ field.isEnabled && field.isRequired ? ' *' : ''}}" [disabled]="!field.isEnabled"
+        [(ngModel)]="field.value" name="{{field.key}}" autocomplete="nope" />
+      <button mat-button *ngIf="field.isEnabled && field.value != null && field.value !== ''" matSuffix mat-icon-button aria-label="Clear"
+        (click)="field.value=null">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+    <span class="alertField" *ngIf="!isValidateField(field)">
+      {{ "form_field_not_valid" | translate }}
+    </span>
+  </ng-container>
+  <p *ngIf="isAtLeastOneFieldEditableAndRequired()" class="fieldRequired">{{ "form_required_field" | translate }}</p>
+  <ng-content></ng-content>
+</form>

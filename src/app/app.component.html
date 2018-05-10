@@ -1,0 +1,6 @@
+<app-loader></app-loader>
+<ng-container *ngIf="isServerAlive">
+  <app-header *ngIf="isAuthenticated"></app-header>
+  <router-outlet></router-outlet>
+  <app-footer *ngIf="isAuthenticated"></app-footer>
+</ng-container>

@@ -1,0 +1,9 @@
+<mat-card>
+    <mat-card-title>{{ "app_name" | translate }}</mat-card-title>
+    <mat-card-subtitle>{{ "app_description" | translate }}</mat-card-subtitle>
+    <mat-card-content>
+        <app-form #loginForm [fields]="loginFields">
+            <button mat-raised-button color="primary" (click)="login()">{{ "login" | translate }}</button>
+        </app-form>
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,5 @@
+<mat-form-field>
+    <input matInput (keyup)="applyFilter($event.target.value)" [placeholder]="'filter' | translate">
+</mat-form-field>
+<ng-content></ng-content>
+<mat-paginator [pageSizeOptions]="pageSizeOptions"></mat-paginator>

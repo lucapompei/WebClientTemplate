@@ -1,0 +1,33 @@
+form {
+    width: 100%;
+    text-align: left;
+    padding: 20px;
+    background-color: #FFFFFF;
+    box-sizing: border-box;
+}
+
+mat-checkbox, mat-form-field {
+    display: block;
+}
+
+mat-form-field:disabled {
+    display: block;
+}
+
+mat-checkbox {
+    margin-bottom: 20px;
+}
+
+.alertField {
+    color: #B71C1C;
+    margin-top: -15px;
+    margin-bottom: 20px;
+    display: block;
+    font-size: 0.8em;
+}
+
+.fieldRequired {
+    color: #9E9E9E;
+    clear: both;
+    font-size: 0.8em;
+}
