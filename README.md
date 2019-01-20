@@ -1,16 +1,16 @@
-# Web Client Template v.1.1.0
+# Web Client Template v.2.0.0
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 =============================
 
-This project represents a generic web client template based on Angular v.5 Framework.
+This project represents a generic web client template based on Angular v.7 Framework.
 
 
 Summary features
 -------
 
-- Project based on Angular v.5 Framework;
+- Project based on Angular v.7 Framework;
 - Angular Material Module configuration;
 - Routing Module configuration;
 - Language translation Module configuration;
@@ -22,7 +22,6 @@ Summary features
 - Base StorageService Service configuration;
 - Base LoggerService Service configuration;
 - Base RouterService Service configuration;
-- Some base components ready-to-use;
 - Fully customizable through the environment properties.
 
 
@@ -35,7 +34,7 @@ Clone or download the Angular project and start its customization.
 License
 -------
 
-  Copyright (C) 2018 lucapompei
+  Copyright (C) 2019 lucapompei
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.

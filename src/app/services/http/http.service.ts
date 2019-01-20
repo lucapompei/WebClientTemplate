@@ -1,19 +1,13 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/empty';
-import 'rxjs/add/observable/from';
-import 'rxjs/add/observable/throw';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/concat';
-import 'rxjs/add/operator/delay';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/retryWhen';
+import { Observable, concat } from 'rxjs';
+import { map, retryWhen, zip } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { HttpRequestInterface } from './http-request.interface';
 
-
+/**
+ * Service used to handle each http request
+ */
 @Injectable()
 export class HttpService {
 
@@ -47,42 +41,46 @@ export class HttpService {
   ) {
     // Initializes the service on the base of the environment
     this.areMocksEnabled = environment.areMocksEnabled;
-    this.apiBaseUrl = environment.apiBaseUrl;
+    this.apiBaseUrl = window.location.protocol + '//' + window.location.hostname + environment.apiPort;
     this.delayBeforeRetryNetworkCall = environment.delayBeforeRetryNetworkCall;
     this.maxNumberOfAttemptForNetworkErrorCall = environment.maxNumberOfAttemptForNetworkErrorCall;
   }
 
   /**
-   * Returns the options configured for observing the entire response
+   *  Returns the base options
+   *
+   * @param httpRequest
    */
-  private getBaseObserve(): any {
-    return {
-      observe: 'response'
-    };
+  private getBaseOptions(httpRequest: HttpRequestInterface): any {
+    const options = {};
+    if (httpRequest.observingResponse) {
+      options['observe'] = 'response';
+    } else if (httpRequest.responseType) {
+      options['responseType'] = httpRequest.responseType;
+    }
+    if (!(httpRequest.body instanceof FormData)) {
+      // Defines the base headers
+      let applicationHeaders = new HttpHeaders();
+      applicationHeaders = applicationHeaders.append('Content-type', 'application/json');
+      options['headers'] = applicationHeaders;
+    }
+    return options;
   }
 
   /**
-   * Returns the options configured for sending the headers
+   * Returns the base projection
+   *
+   * @param response
    */
-  private getBaseHeaders(authorizationToken?: Observable<string>): Observable<any> {
-    // Defines the base headers
-    let applicationHeaders = new HttpHeaders();
-    applicationHeaders = applicationHeaders.append('Content-Type', 'application/json');
-    // Declare the base header observable
-    const baseHeaderObservable = Observable.of({
-      headers: applicationHeaders
-    });
-    // If the authorization token observable is present,
-    // uses it to obtain and put the authorization token into the headers
-    return authorizationToken ?
-      Observable.zip(
-        authorizationToken,
-        baseHeaderObservable,
-        (first, second) => {
-          second.headers = second.headers.append('Authorization', first);
-        }
-      ) :
-      baseHeaderObservable;
+  private getBaseProjection(response: any): any {
+    if (response) {
+      if (response.hasOwnProperty('data')) {
+        response = response['data'];
+      } else if (response.body && response.body.hasOwnProperty('data')) {
+        response.body = response.body['data'];
+      }
+    }
+    return response;
   }
 
   /**
@@ -92,11 +90,11 @@ export class HttpService {
    *
    * @param errors
    */
-  private handleErrorsOnRequest(errors): Observable<any> {
+  private handleErrorsOnRequest(errors: any): Observable<any> {
     return errors
       .delay(this.delayBeforeRetryNetworkCall)
       .take(this.maxNumberOfAttemptForNetworkErrorCall)
-      .switchMap(e => Observable.throw(e));
+      .switchMap((e: any) => Observable.throw(e));
   }
 
   /**
@@ -105,14 +103,25 @@ export class HttpService {
    * @param httpRequest
    */
   public get(httpRequest: HttpRequestInterface): Observable<any> {
-    const options = httpRequest.observingResponse ? this.getBaseObserve() : this.getBaseHeaders(httpRequest.authenticationToken);
-    return this.http.get(
-      this.areMocksEnabled ?
+    const options = this.getBaseOptions(httpRequest);
+    let observable = this.http.get(
+      this.areMocksEnabled || httpRequest.isForcedMock ?
         this.mockBaseUrl + httpRequest.mockUrl :
         this.apiBaseUrl + httpRequest.apiUrl,
-      options
-    )
-      .retryWhen(errors => this.handleErrorsOnRequest(errors));
+      options);
+    if (httpRequest.isPooling) {
+      /*observable = observable.concat(
+        zip(
+          observable,
+          Observable.interval(5000),
+          (item, interval) => item).repeat()
+      );*/
+    }
+    return observable
+      .pipe(
+        retryWhen(errors => this.handleErrorsOnRequest(errors)),
+        map(response => this.getBaseProjection(response))
+      );
   }
 
   /**
@@ -121,8 +130,8 @@ export class HttpService {
    * @param httpRequest
    */
   public post(httpRequest: HttpRequestInterface): Observable<any> {
-    const options = httpRequest.observingResponse ? this.getBaseObserve() : this.getBaseHeaders(httpRequest.authenticationToken);
-    const observable = this.areMocksEnabled ?
+    const options = this.getBaseOptions(httpRequest);
+    const observable = this.areMocksEnabled || httpRequest.isForcedMock ?
       this.http.get(
         this.mockBaseUrl + httpRequest.mockUrl,
         options
@@ -133,17 +142,20 @@ export class HttpService {
         options
       );
     return observable
-      .retryWhen(errors => this.handleErrorsOnRequest(errors));
+      .pipe(
+        retryWhen(errors => this.handleErrorsOnRequest(errors)),
+        map(response => this.getBaseProjection(response))
+      );
   }
 
   /**
-   * Returns an observable built on a POST request
+   * Returns an observable built on a PUT request
    *
    * @param httpRequest
    */
   public put(httpRequest: HttpRequestInterface): Observable<any> {
-    const options = httpRequest.observingResponse ? this.getBaseObserve() : this.getBaseHeaders(httpRequest.authenticationToken);
-    const observable = this.areMocksEnabled ?
+    const options = this.getBaseOptions(httpRequest);
+    const observable = this.areMocksEnabled || httpRequest.isForcedMock ?
       this.http.get(
         this.mockBaseUrl + httpRequest.mockUrl,
         options
@@ -154,17 +166,20 @@ export class HttpService {
         options
       );
     return observable
-      .retryWhen(errors => this.handleErrorsOnRequest(errors));
+      .pipe(
+        retryWhen(errors => this.handleErrorsOnRequest(errors)),
+        map(response => this.getBaseProjection(response))
+      );
   }
 
   /**
-   * Returns an observable built on a POST request
+   * Returns an observable built on a DELETE request
    *
    * @param httpRequest
    */
   public delete(httpRequest: HttpRequestInterface): Observable<any> {
-    const options = httpRequest.observingResponse ? this.getBaseObserve() : this.getBaseHeaders(httpRequest.authenticationToken);
-    const observable = this.areMocksEnabled ?
+    const options = this.getBaseOptions(httpRequest);
+    const observable = this.areMocksEnabled || httpRequest.isForcedMock ?
       this.http.get(
         this.mockBaseUrl + httpRequest.mockUrl,
         options
@@ -174,7 +189,10 @@ export class HttpService {
         options
       );
     return observable
-      .retryWhen(errors => this.handleErrorsOnRequest(errors));
+      .pipe(
+        retryWhen(errors => this.handleErrorsOnRequest(errors)),
+        map(response => this.getBaseProjection(response))
+      );
   }
 
 }

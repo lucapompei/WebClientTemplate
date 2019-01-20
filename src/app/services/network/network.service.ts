@@ -1,20 +1,7 @@
-import { HttpClient, HttpHeaders, HttpSentEvent } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/empty';
-import 'rxjs/add/observable/from';
-import 'rxjs/add/observable/of';
-import 'rxjs/add/observable/throw';
-import 'rxjs/add/observable/zip';
-import 'rxjs/add/operator/catch';
-import 'rxjs/add/operator/concat';
-import 'rxjs/add/operator/delay';
-import 'rxjs/add/operator/do';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/mergeMap';
-import 'rxjs/add/operator/retryWhen';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
-import { LoggerService } from '../logger/logger.service';
 import { UserCredentials } from '../../interfaces/user-credentials.interface';
 import { EventBusService } from '../event-bus/event-bus.service';
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -23,8 +10,11 @@ import { StorageTypeEnum } from '../storage/storage-type.enum';
 import { StorageKeys } from '../storage/storageKeys';
 import { HttpService } from '../http/http.service';
 import { HttpRequestInterface } from '../http/http-request.interface';
-import { RouterService } from '../router/router.service';
+import { DialogRequestInterface } from '../../components/common/dialog/dialog-request.interface';
 
+/**
+ * Service used to handle the server APIs
+ */
 @Injectable()
 export class NetworkService {
 
@@ -48,12 +38,15 @@ export class NetworkService {
    */
   private areMocksEnabled = true;
 
+  /**
+   * Boolean used to force a fake/mocked login
+   */
+  private isFakeLoginEnabled = false;
+
   constructor(
     private httpService: HttpService,
     private eventBusService: EventBusService,
-    private loggerService: LoggerService,
-    private storageService: StorageService,
-    private routerService: RouterService
+    private storageService: StorageService
   ) {
     // Initializes the service on the base of the environment
     this.areMocksEnabled = environment.areMocksEnabled;
@@ -124,7 +117,7 @@ export class NetworkService {
    */
   public isAuthenticated(): Observable<boolean> {
     return this.getAuthenticationToken()
-      .map(response => response != null);
+      .pipe(map(response => response != null));
   }
 
   /**
@@ -135,20 +128,22 @@ export class NetworkService {
    */
   public getAuthenticationToken(forceToLoginIfExpired?: boolean): Observable<string> {
     if (this.authenticationToken == null) {
-      return Observable.of(null);
+      return of(null);
     } else {
       // Checks whether the authentication token must be refreshed
       // and returns it
       return this.refreshAuthenticationTokenIfNecessary()
-        .map(response => {
-          if (this.authenticationToken == null && forceToLoginIfExpired) {
-            // The authentication token is not valid or expired,
-            // so the user is redirect to the first page before the login,
-            // to allow a new login
-            this.routerService.navigateToFirstPageBeforeLogin();
-          }
-          return this.authenticationToken;
-        });
+        .pipe(
+          map(response => {
+            if (this.authenticationToken == null && forceToLoginIfExpired) {
+              // The authentication token is not valid or expired,
+              // so the user is redirect to the first page before the login,
+              // to allow a new login
+              this.eventBusService.changeAuthenticationStatus(false);
+            }
+            return this.authenticationToken;
+          })
+        );
     }
   }
 
@@ -157,21 +152,21 @@ export class NetworkService {
    */
   private refreshAuthenticationTokenIfNecessary(): Observable<any> {
     if (this.userCredentials != null && this.authenticationToken != null) {
-      if (!this.areMocksEnabled && this.jwtHelperService.isTokenExpired(this.authenticationToken)) {
+      if (!this.areMocksEnabled && !this.isFakeLoginEnabled && this.jwtHelperService.isTokenExpired(this.authenticationToken)) {
         // Observable for silently request the authentication token update
         return this.login(this.userCredentials, true);
       }
     }
-    return Observable.of(true);
+    return of(true);
   }
 
   /**
    * Checks if the server is alive or not
    */
-  public isServerAlive(): Observable<any> {
+  public isServerAlive(): Observable<boolean> {
     const httpRequest: HttpRequestInterface = {
-      mockUrl: 'isServerAlive.json',
-      apiUrl: 'isServerAlive',
+      mockUrl: 'info/isAlive.json',
+      apiUrl: 'api/info/isAlive',
     };
     return this.httpService.get(httpRequest);
   }
@@ -184,80 +179,69 @@ export class NetworkService {
       mockUrl: 'login.json',
       apiUrl: 'login',
       body: userCredentials,
-      observingResponse: true
+      observingResponse: true,
+      isForcedMock: this.isFakeLoginEnabled
     };
     const observable = this.httpService.post(httpRequest);
     return observable
-      .map(response => {
-        // Checks if login is successfully done or not
-        if (response && response.status === 200) {
-          let authenticationToken = null;
-          if (this.areMocksEnabled) {
-            // Using mock, gets the authentication token via body
-            authenticationToken = response.body['Authorization'];
+      .pipe(
+        map(response => {
+          // Checks if login is successfully done or not
+          if (response && response.status === 200) {
+            let authenticationToken = null;
+            if (this.areMocksEnabled || this.isFakeLoginEnabled) {
+              // Using mock, gets the authentication token via body
+              authenticationToken = response.body['Authorization'];
+            } else {
+              // Using real endpoint, gets the authentication token via headers
+              authenticationToken = response.headers.get('Authorization');
+            }
+            if (authenticationToken == null) {
+              return this.handleErrorLogin(isSilent, userCredentials, false);
+            }
+            if (!isSilent) {
+              // If the login is not silent, asks to emit the authentication status change
+              this.eventBusService.changeAuthenticationStatus(true);
+            }
+            // Configures the authenticator service through the received authentication token
+            this.configureAuthentication(userCredentials, authenticationToken);
+            // Login is successfully done
+            return true;
           } else {
-            // Using real endpoint, gets the authentication token via headers
-            authenticationToken = response.headers.get('Authorization');
+            return this.handleErrorLogin(isSilent, userCredentials, false);
           }
-          if (!isSilent) {
-            // If the login is not silent, asks to emit the authentication status change
-            this.eventBusService.changeAuthenticationStatus(true);
-          }
-          // Configures the authenticator service through the received authentication token
-          this.configureAuthentication(userCredentials, authenticationToken);
-          // Login is successfully done
-          return true;
-        } else {
-          // Configures the authenticator after login failure
-          this.configureAuthentication(userCredentials, null);
-          // Login is not sucessfully done
-          return Observable.throw(response);
-        }
-      });
+        }),
+        catchError(error => {
+          return this.handleErrorLogin(isSilent, userCredentials, error);
+        })
+      );
+  }
+
+  private handleErrorLogin(isSilent: boolean, userCredentials: UserCredentials, error: any): Observable<any> {
+    // Configures the authenticator after login failure
+    this.configureAuthentication(userCredentials, null);
+    // Login is not sucessfully done
+    this.eventBusService.changeAuthenticationStatus(false);
+    if (!isSilent) {
+      const dialogRequest: DialogRequestInterface = {
+        title: 'login',
+        message: 'login_failed'
+      };
+      this.eventBusService.sendDialogRequest(dialogRequest);
+    }
+    return Observable.throw(error);
   }
 
   /**
    * Checks if the server is alive or not
    */
   public logout(): Observable<any> {
-    const httpRequest: HttpRequestInterface = {
-      mockUrl: 'logout.json',
-      apiUrl: 'logout'
-    };
-    const observable = this.httpService.get(httpRequest);
-    return observable
-      .map(response => {
-        // Configures the authenticator service re-initializing its authentication info
-        this.configureAuthentication();
-        // Emits event to signal the logout
-        this.eventBusService.changeAuthenticationStatus(false);
-        // Logout is successfully done
-        return true;
-      });
-  }
-
-  /**
-   * Gets the list of registered elements
-   */
-  public getElements(): Observable<any> {
-    const httpRequest: HttpRequestInterface = {
-      mockUrl: 'elements.json',
-      apiUrl: 'elements',
-      authenticationToken: this.getAuthenticationToken()
-    };
-    return this.httpService.get(httpRequest);
-  }
-
-  /**
-   * Gets the list of registered users
-   */
-  public getUsers(): Observable<any> {
-    const httpRequest: HttpRequestInterface = {
-      mockUrl: 'users.json',
-      apiUrl: 'users',
-      authenticationToken: this.getAuthenticationToken()
-    };
-    return this.httpService.get(httpRequest);
+    // Configures the authenticator service re-initializing its authentication info
+    this.configureAuthentication();
+    // Emits event to signal the logout
+    this.eventBusService.changeAuthenticationStatus(false);
+    // Logout is successfully done
+    return of(true);
   }
 
 }

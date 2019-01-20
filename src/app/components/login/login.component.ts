@@ -1,15 +1,16 @@
-import { Component, OnInit, Input, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { ISubscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { LoggerService } from '../../services/logger/logger.service';
 import { FieldInterface } from '../common/form/field.interface';
-import { LoginFields } from './login-fields';
+import { LoginFields } from './login.fields';
 import { FormComponent } from '../common/form/form.component';
 import { NetworkService } from '../../services/network/network.service';
 import { EventBusService } from '../../services/event-bus/event-bus.service';
 import { UserCredentials } from '../../interfaces/user-credentials.interface';
 
+/**
+ * The login component used to authenticate the user
+ */
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -20,7 +21,7 @@ export class LoginComponent extends BaseComponent implements OnInit, OnDestroy {
   /**
    * The login fields
    */
-  private loginFields: FieldInterface[] = [];
+  loginFields: FieldInterface[] = [];
 
   /**
    * The login form
@@ -47,11 +48,11 @@ export class LoginComponent extends BaseComponent implements OnInit, OnDestroy {
   public login() {
     // Checks each field validation status
     if (this.loginForm.areValidatedFields()) {
-      // Getting email and password values
-      const emailValue = this.loginForm.getValueByKey('email');
+      // Getting username and password values
+      const usernameValue = this.loginForm.getValueByKey('username');
       const passwordValue = this.loginForm.getValueByKey('password');
       const userCredentials: UserCredentials = {
-        username: emailValue,
+        username: usernameValue,
         password: passwordValue
       };
       // Changes the application loading status
@@ -59,15 +60,13 @@ export class LoginComponent extends BaseComponent implements OnInit, OnDestroy {
       // Subscription for getting known the login phase completion
       this.subscriptions.push(
         this.networkService.login(userCredentials).subscribe(
-          data => {
+          (data: any) => {
+            this.eventBusService.changeLoadingVisibility(false);
             this.loggerService.info('Login successfully done.', data);
           },
-          error => {
-            this.loggerService.error('Error during login!', error);
-            return Observable.throw(error);
-          },
-          () => {
+          (error: any) => {
             this.eventBusService.changeLoadingVisibility(false);
+            this.loggerService.error('Error during login!', error);
           }
         )
       );

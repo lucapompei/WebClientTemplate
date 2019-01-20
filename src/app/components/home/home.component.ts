@@ -1,9 +1,9 @@
-import { Component, OnInit, Input, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { ISubscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
-import { LoggerService } from '../../services/logger/logger.service';
 
+/**
+ * The main application component
+ */
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -11,9 +11,7 @@ import { LoggerService } from '../../services/logger/logger.service';
 })
 export class HomeComponent extends BaseComponent implements OnInit, OnDestroy {
 
-  constructor(
-    private loggerService: LoggerService
-  ) {
+  constructor() {
     super();
   }
 

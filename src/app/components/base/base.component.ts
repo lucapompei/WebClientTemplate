@@ -1,12 +1,15 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { ISubscription } from 'rxjs/Subscription';
+import { OnInit, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 
+/**
+ * Base component for each other component in the application
+ */
 export class BaseComponent implements OnInit, OnDestroy {
 
   /**
    * Subscriptions container
    */
-  subscriptions: ISubscription[] = [];
+  subscriptions: Subscription[] = [];
 
   constructor() { }
 

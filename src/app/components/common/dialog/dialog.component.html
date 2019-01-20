@@ -1,0 +1,14 @@
+<h1 mat-dialog-title>
+  <span *ngIf="dialogRequest != null">{{ dialogRequest.title | translate }}
+  </span>
+</h1>
+<div mat-dialog-content>
+  <p *ngIf="dialogRequest != null">{{ dialogRequest.message | translate }}</p>
+</div>
+<div mat-dialog-actions *ngIf="dialogRequest != null && dialogRequest.callback != null">
+  <button mat-button (click)="retry()">{{ "retry" | translate }}</button>
+  <button mat-button [mat-dialog-close]="dialogRequest" cdkFocusInitial>{{ "close" | translate }}</button>
+</div>
+<div mat-dialog-actions *ngIf="dialogRequest == null || dialogRequest.callback == null">
+  <button mat-button [mat-dialog-close]="dialogRequest" cdkFocusInitial>{{ "close" | translate }}</button>
+</div>

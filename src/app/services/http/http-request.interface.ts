@@ -1,11 +1,14 @@
-import { Observable } from 'rxjs/Observable';
-
+/**
+ * The http request interface
+ */
 export interface HttpRequestInterface {
 
     mockUrl: string;
     apiUrl: string;
     body?: any;
-    authenticationToken?: Observable<string>;
     observingResponse?: boolean;
+    responseType?: string;
+    isPooling?: boolean;
+    isForcedMock?: boolean;
 
 }

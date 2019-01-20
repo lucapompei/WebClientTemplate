@@ -1,20 +1,17 @@
 {
     "app_name": "Web Client Template",
-    "app_description": "The Web Client Platform Template",
+    "app_description": "The Web Client Template Platform",
     "email": "Email",
-    "email_placeholder": "Insert your email address",
     "password": "Password",
-    "password_placeholder": "Insert your password",
+    "username": "Username",
     "login": "Login",
+    "login_failed": "Invalid credentials",
     "logout": "Logout",
+    "about": "About",
     "form_required_field": "* Required data",
     "form_field_not_valid": "The required field is not valid",
-    "profile": "Profile",
-    "filter": "Filter",
-    "icon_element": "Icon",
-    "name": "Name",
-    "description": "Description",
-    "username": "Username",
-    "elements": "Elements",
-    "users": "Users"
+    "find_entries": "Find entries",
+    "retry": "Retry",
+    "server_title": "Web Server",
+    "server_down_message": "The server is currently down"
 }

@@ -1,6 +1,9 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { BaseComponent } from '../../base/base.component';
 
+/**
+ * The footer component
+ */
 @Component({
   selector: 'app-footer',
   templateUrl: './footer.component.html',

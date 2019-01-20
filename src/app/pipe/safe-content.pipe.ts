@@ -1,6 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
+/**
+ * Pipe used to sanitize the dom
+ */
 @Pipe({
   name: 'safeContent'
 })

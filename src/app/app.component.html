@@ -1,6 +1,14 @@
+<!-- Application loader -->
 <app-loader></app-loader>
+<!-- Application content -->
 <ng-container *ngIf="isServerAlive">
+  <!-- Header -->
   <app-header *ngIf="isAuthenticated"></app-header>
-  <router-outlet></router-outlet>
+  <!-- Main content -->
+  <div class="mainContent">
+    <router-outlet></router-outlet>
+  </div>
+  <!-- Footer -->
   <app-footer *ngIf="isAuthenticated"></app-footer>
 </ng-container>
+<app-dialog-handler></app-dialog-handler>

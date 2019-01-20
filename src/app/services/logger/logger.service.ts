@@ -3,6 +3,9 @@ import { LogLevelEnum } from './log-level-enum';
 
 import { environment } from '../../../environments/environment';
 
+/**
+ * The logger service
+ */
 @Injectable()
 export class LoggerService {
 

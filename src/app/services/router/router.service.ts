@@ -3,6 +3,9 @@ import { Router } from '@angular/router';
 
 import { environment } from '../../../environments/environment';
 
+/**
+ * Service used to handle the route
+ */
 @Injectable()
 export class RouterService {
 

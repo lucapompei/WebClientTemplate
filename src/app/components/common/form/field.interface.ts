@@ -1,5 +1,8 @@
 import { FieldTypeEnum } from './field-type.enum';
 
+/**
+ * The form field interface
+ */
 export interface FieldInterface {
 
     key: string;
@@ -7,7 +10,6 @@ export interface FieldInterface {
     type: FieldTypeEnum;
     value: any;
     values?: any[];
-    placeholder: string;
     isRequired: boolean;
     isEnabled: boolean;
 

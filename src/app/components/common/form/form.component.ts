@@ -1,12 +1,11 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { BaseComponent } from '../../base/base.component';
 import { FieldInterface } from './field.interface';
 import { FieldTypeEnum } from './field-type.enum';
-import { LoggerService } from '../../../services/logger/logger.service';
-import { FormGroup, FormControl } from '@angular/forms';
 
-declare var $: any;
-
+/**
+ * Form field component used to display and manage each application form
+ */
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
@@ -15,7 +14,7 @@ declare var $: any;
 export class FormComponent extends BaseComponent implements OnInit, OnDestroy {
 
   /**
-   * boolean used to indicate if the view is just created and
+   * Boolean used to indicate if the view is just created and
    * there is no interaction with the user yet
    */
   private isTheInitializationPhase = true;
@@ -28,11 +27,14 @@ export class FormComponent extends BaseComponent implements OnInit, OnDestroy {
   /**
    * The field enum
    */
-  private fieldTypeEnum = FieldTypeEnum;
+  fieldTypeEnum = FieldTypeEnum;
 
-  constructor(
-    private loggerService: LoggerService
-  ) {
+  /**
+   * The event used to signal that there is a file to upload
+   */
+  @Output() uploadFileEvent: EventEmitter<any> = new EventEmitter();
+
+  constructor() {
     super();
   }
 
@@ -57,20 +59,21 @@ export class FormComponent extends BaseComponent implements OnInit, OnDestroy {
     if (
       this.isTheInitializationPhase ||
       !field.isEnabled ||
-      (!field.isRequired && (field.value == null || field.value === ''))) {
+      (!field.isRequired && (field.type === FieldTypeEnum.BOOLEAN || field.value == null || field.value === ''))) {
       return true;
     } else if (field.type === FieldTypeEnum.PHONE) {
       const numberRegex = /[?\+]{0,1}[0-9]+/g;
       return field.value != null && field.value.length >= 3 && numberRegex.test(field.value);
     } else if (field.type === FieldTypeEnum.NUMBER) {
       const numberRegex = /\d+/g;
-      return field.value != null && field.value.length >= 3 && numberRegex.test(field.value);
+      return field.value != null && numberRegex.test(field.value);
     } else if (field.type === FieldTypeEnum.EMAIL) {
       const emailRegex = /^\S+@\S+$/;
       return field.value != null && emailRegex.test(field.value);
     } else if (field.type === FieldTypeEnum.PASSWORD) {
-      const passwordRegex = /^(?=.*[A-Za-z])(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/;
-      return field.value != null && passwordRegex.test(field.value);
+      // const passwordRegex = /^(?=.*[A-Za-z])(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/;
+      // return field.value != null && passwordRegex.test(field.value);
+      return field.value != null && field.value.replace(' ', '').length >= 3;
     } else if (field.type === FieldTypeEnum.CONFIRM_PASSWORD) {
       let passwordField = null;
       const fields = this.fields;
@@ -93,7 +96,7 @@ export class FormComponent extends BaseComponent implements OnInit, OnDestroy {
   /**
    * Checks the existence of at least one mandatory field
    */
-  private isAtLeastOneFieldEditableAndRequired(): boolean {
+  public isAtLeastOneFieldEditableAndRequired(): boolean {
     const listSize = this.fields.length;
     for (let index = 0; index < listSize; index++) {
       if (this.fields[index].isEnabled && this.fields[index].isRequired) {
@@ -108,7 +111,6 @@ export class FormComponent extends BaseComponent implements OnInit, OnDestroy {
    */
   public areValidatedFields(): boolean {
     this.isTheInitializationPhase = false;
-    const validatedFields = {};
     const listSize = this.fields.length;
     for (let index = 0; index < listSize; index++) {
       if (!this.isValidateField(this.fields[index])) {
@@ -132,6 +134,42 @@ export class FormComponent extends BaseComponent implements OnInit, OnDestroy {
       }
     }
     return null;
+  }
+
+  /**
+   * Force the force field value for the given key
+   *
+   * @param key
+   * @param value
+   */
+  public forceFormFieldValue(key: string, value: any): void {
+    const listSize = this.fields.length;
+    for (let index = 0; index < listSize; index++) {
+      if (this.fields[index].key === key) {
+        this.fields[index].value = value;
+      }
+    }
+  }
+
+  /**
+   * Reset the form fields
+   */
+  public resetFormFields(): void {
+    const listSize = this.fields.length;
+    for (let index = 0; index < listSize; index++) {
+        this.fields[index].value = null;
+    }
+  }
+
+  /**
+   * Emits the event for the file to upload
+   *
+   * @param file
+   */
+  public uploadFile(file: any) {
+    if (file != null) {
+      this.uploadFileEvent.emit(file);
+    }
   }
 
 }

@@ -1,11 +1,12 @@
-import { Component, OnInit, Input, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { ISubscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
-import { NetworkService } from '../../../services/network/network.service';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Observable } from 'rxjs';
 import { LoggerService } from '../../../services/logger/logger.service';
 import { EventBusService } from '../../../services/event-bus/event-bus.service';
 import { BaseComponent } from '../../base/base.component';
 
+/**
+ * Loader component used to wait the application breaks
+ */
 @Component({
   selector: 'app-loader',
   templateUrl: './loader.component.html',
@@ -16,7 +17,7 @@ export class LoaderComponent extends BaseComponent implements OnInit, OnDestroy 
   /**
    * Boolean used to get the loader visible/invisible
    */
-  private isLoaderVisible = false;
+  isLoaderVisible = false;
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -48,7 +49,7 @@ export class LoaderComponent extends BaseComponent implements OnInit, OnDestroy 
             this.loggerService.debug('Loader\'s visibility status has changed.', data);
           }
         },
-        error => {
+        (error: any) => {
           this.loggerService.error('Unable to get the loader\'s visibility status change!', error);
           return Observable.throw(error);
         }

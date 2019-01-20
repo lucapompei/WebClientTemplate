@@ -1,16 +1,16 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import { ISubscription } from 'rxjs/Subscription';
 import { NetworkService } from './services/network/network.service';
 import { LoggerService } from './services/logger/logger.service';
-import { ServerStatusInterface } from './interfaces/server-status-interface';
-import { IfObservable } from 'rxjs/observable/IfObservable';
-import { Observable } from 'rxjs/Observable';
 import { BaseComponent } from './components/base/base.component';
 import { EventBusService } from './services/event-bus/event-bus.service';
 import { RouterService } from './services/router/router.service';
+import { DialogRequestInterface } from './components/common/dialog/dialog-request.interface';
 
+/**
+ * Main application component
+ */
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -22,7 +22,7 @@ export class AppComponent extends BaseComponent implements OnInit, OnDestroy {
   /**
    * Boolean used to getting known the server status
    */
-  private isServerAlive = false;
+  isServerAlive = false;
 
   /**
    * Boolean used to getting known the authentication status
@@ -59,19 +59,33 @@ export class AppComponent extends BaseComponent implements OnInit, OnDestroy {
     // Subscribe for getting known the server status
     this.subscriptions.push(this.networkService.isServerAlive()
       .subscribe(
-        (data: ServerStatusInterface) => {
-          this.isServerAlive = data && data.status;
-          this.loggerService.info('Server status received.', data);
-        },
-        error => {
-          this.loggerService.error('Unable to get the server status!', error);
-          return Observable.throw(error);
-        },
-        () => {
+        (data: boolean) => {
+          this.isServerAlive = data;
           this.eventBusService.changeLoadingVisibility(false);
+          this.loggerService.info('Server status received.', data);
+          this.handleServerStatus();
+        },
+        (error: any) => {
+          this.eventBusService.changeLoadingVisibility(false);
+          this.loggerService.error('Unable to get the server status!', error);
+          this.handleServerStatus();
         }
       )
     );
+  }
+
+  /**
+   * Handles the server status
+   */
+  private handleServerStatus(): void {
+    if (!this.isServerAlive) {
+      const dialogRequest: DialogRequestInterface = {
+        title: 'server_title',
+        message: 'server_down_message',
+        callback: () => this.checkServerStatus()
+      };
+      this.eventBusService.sendDialogRequest(dialogRequest);
+    }
   }
 
   /**
@@ -139,7 +153,7 @@ export class AppComponent extends BaseComponent implements OnInit, OnDestroy {
     // Subscribe for getting know of language changes
     this.subscriptions.push(this.translateService.onLangChange
       .subscribe(
-        data => this.setApplicationTitle()
+        (data: any) => this.setApplicationTitle()
       )
     );
   }

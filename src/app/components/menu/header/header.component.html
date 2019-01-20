@@ -2,7 +2,7 @@
     <mat-toolbar-row>
         <span>{{ "app_name" | translate }}</span>
         <span class="whitespace"></span>
-        <button mat-button>{{ "profile" | translate }}</button>
+        <button mat-button routerLink="about">{{ "about" | translate }}</button>
         <button mat-button (click)="logout()">{{ "logout" | translate }}</button>
     </mat-toolbar-row>
 </mat-toolbar>

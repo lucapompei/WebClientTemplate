@@ -4,6 +4,9 @@ import { StorageTypeEnum } from './storage-type.enum';
 
 import { environment } from '../../../environments/environment';
 
+/**
+ * Service used to handle the application storage
+ */
 @Injectable()
 export class StorageService {
 
@@ -122,7 +125,7 @@ export class StorageService {
    * @param value
    * @param storageType
    */
-  private encryptObject(objectToEncrypt): string {
+  private encryptObject(objectToEncrypt: any): string {
     const textToEncrypt = JSON.stringify(objectToEncrypt);
     let insertPosition = 0;
     while (insertPosition === 0 || insertPosition >= textToEncrypt.length) {
@@ -138,7 +141,7 @@ export class StorageService {
    * @param textToEncrypt
    * @param defaultValue
    */
-  private decryptObject(textToEncrypt, defaultValue) {
+  private decryptObject(textToEncrypt: any, defaultValue: any) {
     try {
       return JSON.parse(atob(textToEncrypt).replace(this.storageSecretKey, ''));
     } catch (err) {

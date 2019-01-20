@@ -1,6 +1,9 @@
 import { Injectable, Output, EventEmitter } from '@angular/core';
-import { UserCredentials } from '../../interfaces/user-credentials.interface';
+import { DialogRequestInterface } from '../../components/common/dialog/dialog-request.interface';
 
+/**
+ * Service used to handle the event bus
+ */
 @Injectable()
 export class EventBusService {
 
@@ -13,6 +16,11 @@ export class EventBusService {
    * The event that signals the loader visibility changes
    */
   @Output() loaderVisibilityEvent: EventEmitter<any> = new EventEmitter();
+
+  /**
+   * The event that signals the dialog request
+   */
+  @Output() dialogRequestEvent: EventEmitter<any> = new EventEmitter();
 
   constructor() { }
 
@@ -32,6 +40,15 @@ export class EventBusService {
    */
   public changeLoadingVisibility(status: boolean): void {
     this.loaderVisibilityEvent.emit(status);
+  }
+
+  /**
+   * Emits the event to signal the dialog request
+   *
+   * @param dialogRequest
+   */
+  public sendDialogRequest(dialogRequest: DialogRequestInterface): void {
+    this.dialogRequestEvent.emit(dialogRequest);
   }
 
 }

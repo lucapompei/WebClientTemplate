@@ -1,17 +1,19 @@
 import { FieldInterface } from '../common/form/field.interface';
 import { FieldTypeEnum } from '../common/form/field-type.enum';
 
+/**
+ * The login form fields
+ */
 export class LoginFields {
 
     /**
      * The login fields
      */
     loginFields: FieldInterface[] = [{
-        title: 'email',
-        type: FieldTypeEnum.EMAIL,
-        key: 'email',
+        title: 'username',
+        type: FieldTypeEnum.STRING,
+        key: 'username',
         value: null,
-        placeholder: 'email_placeholder',
         isRequired: true,
         isEnabled: true
     },
@@ -20,7 +22,6 @@ export class LoginFields {
         type: FieldTypeEnum.PASSWORD,
         key: 'password',
         value: null,
-        placeholder: 'password_placeholder',
         isRequired: true,
         isEnabled: true
     }];

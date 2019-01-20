@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -16,31 +16,31 @@ import { LoaderComponent } from './components/common/loader/loader.component';
 import { HeaderComponent } from './components/menu/header/header.component';
 import { FooterComponent } from './components/menu/footer/footer.component';
 import { LoginComponent } from './components/login/login.component';
-import { HomeComponent } from './components/home/home.component';
 import { PreLoginGuardService } from './guards/pre-login-guard.service';
 import { PostLoginGuardService } from './guards/post-login-guard.service';
-import { HttpClient } from '@angular/common/http';
 import { FormComponent } from './components/common/form/form.component';
 import { AppMaterialModule } from './app-material.module';
 import { HttpService } from './services/http/http.service';
 import { RouterService } from './services/router/router.service';
 import { SafeContentPipe } from './pipe/safe-content.pipe';
-import { UsersComponent } from './components/users/users.component';
-import { TableComponent } from './components/common/table/table.components';
-import { ElementsComponent } from './components/elements/elements.component';
+import { DialogHanlderComponent } from './components/common/dialog/dialog-handler.component';
+import { DialogComponent } from './components/common/dialog/dialog.component';
+import { HttpInterceptorService } from './services/http/http-interceptor.service';
+import { AboutComponent } from './components/about/about.component';
+import { HomeComponent } from './components/home/home.component';
 
 @NgModule({
   declarations: [
+    AboutComponent,
     AppComponent,
+    DialogComponent,
+    DialogHanlderComponent,
     FormComponent,
     LoaderComponent,
-    TableComponent,
-    ElementsComponent,
     HomeComponent,
     LoginComponent,
     HeaderComponent,
     FooterComponent,
-    UsersComponent,
     SafeContentPipe
   ],
   imports: [
@@ -62,7 +62,16 @@ import { ElementsComponent } from './components/elements/elements.component';
     RouterService,
     StorageService,
     PreLoginGuardService,
-    PostLoginGuardService
+    PostLoginGuardService,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpInterceptorService,
+      multi: true
+    }
+  ],
+  entryComponents: [
+    DialogComponent,
+    DialogHanlderComponent
   ],
   bootstrap: [AppComponent]
 })

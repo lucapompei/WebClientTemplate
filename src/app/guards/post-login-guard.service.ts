@@ -1,9 +1,13 @@
 import { CanActivate } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { Injectable } from '@angular/core';
 import { NetworkService } from '../services/network/network.service';
 import { RouterService } from '../services/router/router.service';
 
+/**
+ * The guard used to activate the application pages for the authenticated user
+ */
 @Injectable()
 export class PostLoginGuardService implements CanActivate {
 
@@ -18,12 +22,13 @@ export class PostLoginGuardService implements CanActivate {
      */
     canActivate(): Observable<boolean> {
         return this.networkService.isAuthenticated()
-            .map(response => !response)
-            .do(response => {
-                if (!response) {
-                    this.routerService.navigateToFirstPageAfterLogin();
-                }
-            });
+            .pipe(
+                tap(response => {
+                    if (!response) {
+                        this.routerService.navigateToFirstPageBeforeLogin();
+                    }
+                })
+            );
     }
 
 }
