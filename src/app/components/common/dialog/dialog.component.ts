@@ -3,6 +3,9 @@ import { BaseComponent } from '../../base/base.component';
 import { DialogRequestInterface } from './dialog-request.interface';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 
+/**
+ * The centralized dialog component
+ */
 @Component({
   selector: 'app-dialog',
   templateUrl: './dialog.component.html',

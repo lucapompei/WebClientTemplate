@@ -1,3 +1,6 @@
+/**
+ * The dialog request interface
+ */
 export interface DialogRequestInterface {
 
     title: string;

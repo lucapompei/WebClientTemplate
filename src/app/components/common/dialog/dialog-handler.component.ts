@@ -6,6 +6,9 @@ import { DialogRequestInterface } from './dialog-request.interface';
 import { MatDialog } from '@angular/material';
 import { DialogComponent } from './dialog.component';
 
+/**
+ * The dialog handler component
+ */
 @Component({
   selector: 'app-dialog-handler',
   templateUrl: './dialog-handler.component.html'
@@ -40,9 +43,6 @@ export class DialogHanlderComponent extends BaseComponent implements OnInit {
   private handleDialogRequest(data: DialogRequestInterface): void {
     const dialogRef = this.dialog.open(DialogComponent, {
       data: data
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      // this.dialogRequest = null;
     });
   }
 
