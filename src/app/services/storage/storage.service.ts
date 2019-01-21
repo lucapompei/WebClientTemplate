@@ -145,6 +145,7 @@ export class StorageService {
     try {
       return JSON.parse(atob(textToEncrypt).replace(this.storageSecretKey, ''));
     } catch (err) {
+      this.loggerService.debug('Error during decrypting: ' + textToEncrypt + ', returing default value', err);
       return defaultValue;
     }
   }

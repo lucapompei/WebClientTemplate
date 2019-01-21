@@ -23,7 +23,7 @@ export class PostLoginGuardService implements CanActivate {
     canActivate(): Observable<boolean> {
         return this.networkService.isAuthenticated()
             .pipe(
-                tap(response => {
+                tap((response: boolean) => {
                     if (!response) {
                         this.routerService.navigateToFirstPageBeforeLogin();
                     }

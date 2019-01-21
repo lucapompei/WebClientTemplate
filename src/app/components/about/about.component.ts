@@ -19,12 +19,11 @@ export class AboutComponent extends BaseComponent implements OnInit, OnDestroy {
 
   constructor() {
     super();
-  }
-
-  ngOnInit() {
     // Take application version from environment
     this.appVersion = environment.appVersion;
   }
+
+  ngOnInit() { }
 
   ngOnDestroy() { }
 

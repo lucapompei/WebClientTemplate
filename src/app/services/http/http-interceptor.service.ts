@@ -18,7 +18,7 @@ export class HttpInterceptorService implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return this.networkService.getAuthenticationToken()
             .pipe(
-                flatMap(response => {
+                flatMap((response: any) => {
                     if (response == null) {
                         return next.handle(request);
                     } else {

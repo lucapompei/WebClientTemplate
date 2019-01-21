@@ -10,7 +10,7 @@ export const environment = {
   appVersion: require('../../package.json').version,
   logLevel: LogLevelEnum.DEBUG,
   storageSecretKey: '',
-  areMocksEnabled: true,
+  areMocksEnabled: false,
   apiPort: ':8080/',
   delayBeforeRetryNetworkCall: 2000,
   maxNumberOfAttemptForNetworkErrorCall: 3,

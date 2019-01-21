@@ -117,7 +117,7 @@ export class NetworkService {
    */
   public isAuthenticated(): Observable<boolean> {
     return this.getAuthenticationToken()
-      .pipe(map(response => response != null));
+      .pipe(map((response: any) => response != null));
   }
 
   /**
@@ -134,7 +134,7 @@ export class NetworkService {
       // and returns it
       return this.refreshAuthenticationTokenIfNecessary()
         .pipe(
-          map(response => {
+          map((response: any) => {
             if (this.authenticationToken == null && forceToLoginIfExpired) {
               // The authentication token is not valid or expired,
               // so the user is redirect to the first page before the login,
@@ -185,7 +185,7 @@ export class NetworkService {
     const observable = this.httpService.post(httpRequest);
     return observable
       .pipe(
-        map(response => {
+        map((response: any) => {
           // Checks if login is successfully done or not
           if (response && response.status === 200) {
             let authenticationToken = null;
@@ -211,7 +211,7 @@ export class NetworkService {
             return this.handleErrorLogin(isSilent, userCredentials, false);
           }
         }),
-        catchError(error => {
+        catchError((error: any) => {
           return this.handleErrorLogin(isSilent, userCredentials, error);
         })
       );

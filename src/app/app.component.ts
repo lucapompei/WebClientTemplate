@@ -136,7 +136,7 @@ export class AppComponent extends BaseComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.translateService.get('app_name')
         .subscribe(
-          data => this.titleService.setTitle(data)
+          (data: string) => this.titleService.setTitle(data)
         )
     );
   }

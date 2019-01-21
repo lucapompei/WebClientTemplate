@@ -22,8 +22,8 @@ export class PreLoginGuardService implements CanActivate {
      */
     canActivate(): Observable<boolean> {
         return this.networkService.isAuthenticated().pipe(
-            map(response => !response),
-            tap(response => {
+            map((response: boolean) => !response),
+            tap((response: boolean) => {
                 if (!response) {
                     this.routerService.navigateToFirstPageAfterLogin();
                 }

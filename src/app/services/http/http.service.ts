@@ -119,8 +119,8 @@ export class HttpService {
     }
     return observable
       .pipe(
-        retryWhen(errors => this.handleErrorsOnRequest(errors)),
-        map(response => this.getBaseProjection(response))
+        retryWhen((errors: any) => this.handleErrorsOnRequest(errors)),
+        map((response: any) => this.getBaseProjection(response))
       );
   }
 
@@ -143,8 +143,8 @@ export class HttpService {
       );
     return observable
       .pipe(
-        retryWhen(errors => this.handleErrorsOnRequest(errors)),
-        map(response => this.getBaseProjection(response))
+        retryWhen((errors: any) => this.handleErrorsOnRequest(errors)),
+        map((response: any) => this.getBaseProjection(response))
       );
   }
 
@@ -167,8 +167,8 @@ export class HttpService {
       );
     return observable
       .pipe(
-        retryWhen(errors => this.handleErrorsOnRequest(errors)),
-        map(response => this.getBaseProjection(response))
+        retryWhen((errors: any) => this.handleErrorsOnRequest(errors)),
+        map((response: any) => this.getBaseProjection(response))
       );
   }
 
@@ -190,8 +190,8 @@ export class HttpService {
       );
     return observable
       .pipe(
-        retryWhen(errors => this.handleErrorsOnRequest(errors)),
-        map(response => this.getBaseProjection(response))
+        retryWhen((errors: any) => this.handleErrorsOnRequest(errors)),
+        map((response: any) => this.getBaseProjection(response))
       );
   }
 
