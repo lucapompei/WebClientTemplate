@@ -38,11 +38,6 @@ export class NetworkService {
    */
   private areMocksEnabled = true;
 
-  /**
-   * Boolean used to force a fake/mocked login
-   */
-  private isFakeLoginEnabled = false;
-
   constructor(
     private httpService: HttpService,
     private eventBusService: EventBusService,
@@ -62,14 +57,10 @@ export class NetworkService {
     this.jwtHelperService = new JwtHelperService();
     // Gets values from session if they exist
     const savedUserCredentials = this.storageService.retrieveOrGetDefault(
-      StorageKeys.userCredentialsKey,
-      null,
-      StorageTypeEnum.SESSION_STORAGE
+      StorageKeys.userCredentialsKey, null, StorageTypeEnum.SESSION_STORAGE
     );
     const savedAuthenticationToken = this.storageService.retrieveOrGetDefault(
-      StorageKeys.authenticationTokenKey,
-      null,
-      StorageTypeEnum.SESSION_STORAGE
+      StorageKeys.authenticationTokenKey, null, StorageTypeEnum.SESSION_STORAGE
     );
     // Updates the authentication info
     if (savedUserCredentials != null && savedAuthenticationToken != null) {
@@ -86,7 +77,7 @@ export class NetworkService {
    * @param authenticationToken
    */
   private configureAuthentication(userCredentials?: UserCredentials, authenticationToken?: string): void {
-    // Updates authorization info setting or removing them
+    // Updates authorization info settings or removing them
     this.userCredentials = userCredentials ? userCredentials : null;
     this.authenticationToken = authenticationToken ? authenticationToken : null;
     // Updates the session info
@@ -94,20 +85,25 @@ export class NetworkService {
   }
 
   /**
-   * Stores or updates the authentication info in session
-   *
-   * @param usercredentials
-   * @param authenticationToken
+   * Stores or removes the authentication info in session
    */
   private updateAuthenticationInfoInSession(): void {
     if (this.userCredentials != null && this.authenticationToken != null) {
       // Updates the authentication info in session
-      this.storageService.store(StorageKeys.userCredentialsKey, this.userCredentials, StorageTypeEnum.SESSION_STORAGE);
-      this.storageService.store(StorageKeys.authenticationTokenKey, this.authenticationToken, StorageTypeEnum.SESSION_STORAGE);
+      this.storageService.store(
+        StorageKeys.userCredentialsKey, this.userCredentials, StorageTypeEnum.SESSION_STORAGE
+      );
+      this.storageService.store(
+        StorageKeys.authenticationTokenKey, this.authenticationToken, StorageTypeEnum.SESSION_STORAGE
+      );
     } else {
       // Removes the authentication info from session
-      this.storageService.remove(StorageKeys.userCredentialsKey, StorageTypeEnum.SESSION_STORAGE);
-      this.storageService.remove(StorageKeys.authenticationTokenKey, StorageTypeEnum.SESSION_STORAGE);
+      this.storageService.remove(
+        StorageKeys.userCredentialsKey, StorageTypeEnum.SESSION_STORAGE
+      );
+      this.storageService.remove(
+        StorageKeys.authenticationTokenKey, StorageTypeEnum.SESSION_STORAGE
+      );
     }
   }
 
@@ -117,16 +113,14 @@ export class NetworkService {
    */
   public isAuthenticated(): Observable<boolean> {
     return this.getAuthenticationToken()
-      .pipe(map((response: any) => response != null));
+      .pipe(map((response: string) => response != null));
   }
 
   /**
    * Returns the current authentication token,
    * refreshing it if it is necessary
-   *
-   * @param forceToLoginIfExpired
    */
-  public getAuthenticationToken(forceToLoginIfExpired?: boolean): Observable<string> {
+  public getAuthenticationToken(): Observable<string> {
     if (this.authenticationToken == null) {
       return of(null);
     } else {
@@ -134,8 +128,8 @@ export class NetworkService {
       // and returns it
       return this.refreshAuthenticationTokenIfNecessary()
         .pipe(
-          map((response: any) => {
-            if (this.authenticationToken == null && forceToLoginIfExpired) {
+          map((response: string) => {
+            if (this.authenticationToken == null) {
               // The authentication token is not valid or expired,
               // so the user is redirect to the first page before the login,
               // to allow a new login
@@ -152,7 +146,7 @@ export class NetworkService {
    */
   private refreshAuthenticationTokenIfNecessary(): Observable<any> {
     if (this.userCredentials != null && this.authenticationToken != null) {
-      if (!this.areMocksEnabled && !this.isFakeLoginEnabled && this.jwtHelperService.isTokenExpired(this.authenticationToken)) {
+      if (!this.areMocksEnabled && this.jwtHelperService.isTokenExpired(this.authenticationToken)) {
         // Observable for silently request the authentication token update
         return this.login(this.userCredentials, true);
       }
@@ -163,33 +157,20 @@ export class NetworkService {
   /**
    * Checks if the server is alive or not
    */
-  public isServerAlive(): Observable<boolean> {
-    const httpRequest: HttpRequestInterface = {
-      mockUrl: 'info/isAlive.json',
-      apiUrl: 'api/info/isAlive',
-    };
-    return this.httpService.get(httpRequest);
-  }
-
-  /**
-   * Checks if the server is alive or not
-   */
   public login(userCredentials: UserCredentials, isSilent?: boolean): Observable<any> {
     const httpRequest: HttpRequestInterface = {
       mockUrl: 'login.json',
       apiUrl: 'login',
       body: userCredentials,
-      observingResponse: true,
-      isForcedMock: this.isFakeLoginEnabled
+      observingResponse: true
     };
-    const observable = this.httpService.post(httpRequest);
-    return observable
+    return this.httpService.post(httpRequest)
       .pipe(
         map((response: any) => {
           // Checks if login is successfully done or not
           if (response && response.status === 200) {
             let authenticationToken = null;
-            if (this.areMocksEnabled || this.isFakeLoginEnabled) {
+            if (this.areMocksEnabled) {
               // Using mock, gets the authentication token via body
               authenticationToken = response.body['Authorization'];
             } else {
@@ -242,6 +223,17 @@ export class NetworkService {
     this.eventBusService.changeAuthenticationStatus(false);
     // Logout is successfully done
     return of(true);
+  }
+
+  /**
+   * Checks if the server is alive or not
+   */
+  public isServerAlive(): Observable<boolean> {
+    const httpRequest: HttpRequestInterface = {
+      mockUrl: 'info/isAlive.json',
+      apiUrl: 'api/info/isAlive',
+    };
+    return this.httpService.get(httpRequest);
   }
 
 }
