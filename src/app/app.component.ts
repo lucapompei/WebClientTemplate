@@ -7,6 +7,7 @@ import { BaseComponent } from './components/base/base.component';
 import { EventBusService } from './services/event-bus/event-bus.service';
 import { RouterService } from './services/router/router.service';
 import { DialogRequestInterface } from './components/common/dialog/dialog-request.interface';
+import { environment } from 'src/environments/environment';
 
 /**
  * Main application component
@@ -18,6 +19,11 @@ import { DialogRequestInterface } from './components/common/dialog/dialog-reques
   encapsulation: ViewEncapsulation.None
 })
 export class AppComponent extends BaseComponent implements OnInit, OnDestroy {
+
+  /**
+     * The default application language
+     */
+  private defaultLanguage: string;
 
   /**
    * Boolean used to getting known the server status
@@ -38,6 +44,8 @@ export class AppComponent extends BaseComponent implements OnInit, OnDestroy {
     private eventBusService: EventBusService
   ) {
     super();
+    // Read the default language
+    this.defaultLanguage = environment.defaultLanguage;
   }
 
   ngOnInit() {
@@ -148,7 +156,7 @@ export class AppComponent extends BaseComponent implements OnInit, OnDestroy {
    */
   private initAndKeepUpdateApplicationTitle(): void {
     // Sets the default language
-    this.translateService.setDefaultLang('en');
+    this.translateService.setDefaultLang(this.defaultLanguage);
     this.setApplicationTitle();
     // Subscribe for getting know of language changes
     this.subscriptions.push(this.translateService.onLangChange

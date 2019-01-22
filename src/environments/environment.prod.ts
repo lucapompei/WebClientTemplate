@@ -10,5 +10,6 @@ export const environment = {
   delayBeforeRetryNetworkCall: 2000,
   maxNumberOfAttemptForNetworkErrorCall: 3,
   firstPageBeforeLogin: '/login',
-  firstPageAfterLogin: ''
+  firstPageAfterLogin: '',
+  defaultLanguage: 'en'
 };
