@@ -1,5 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { LoggerService } from '../../../services/logger/logger.service';
 import { EventBusService } from '../../../services/event-bus/event-bus.service';
 import { BaseComponent } from '../../base/base.component';
@@ -15,12 +14,16 @@ import { BaseComponent } from '../../base/base.component';
 export class LoaderComponent extends BaseComponent implements OnInit, OnDestroy {
 
   /**
+   * Counter used to track the number of pending requests received
+   */
+  private counter = 0;
+
+  /**
    * Boolean used to get the loader visible/invisible
    */
   isLoaderVisible = false;
 
   constructor(
-    private cdRef: ChangeDetectorRef,
     private eventBusService: EventBusService,
     private loggerService: LoggerService
   ) {
@@ -37,21 +40,16 @@ export class LoaderComponent extends BaseComponent implements OnInit, OnDestroy 
    */
   private handleVisibilityChange() {
     // Subscribe for events that signal the loader visibility change
-    this.subscriptions.push(this.eventBusService.loaderVisibilityEvent
-      .subscribe(
+    this.subscriptions.push(
+      this.eventBusService.loaderVisibilityEvent.subscribe(
         (data: boolean) => {
-          if (this.isLoaderVisible !== data) {
-            this.isLoaderVisible = data;
-            if (this.isLoaderVisible) {
-              window.scroll(0, 0);
-            }
-            this.cdRef.detectChanges();
-            this.loggerService.debug('Loader\'s visibility status has changed.', data);
-          }
+          // Increase/decrease counter
+          this.counter += data ? 1 : -1;
+          // The loader is visibile when the counter is positive
+          this.isLoaderVisible = this.counter > 0;
         },
         (error: any) => {
           this.loggerService.error('Unable to get the loader\'s visibility status change!', error);
-          return Observable.throw(error);
         }
       )
     );
