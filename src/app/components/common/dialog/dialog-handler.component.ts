@@ -41,7 +41,7 @@ export class DialogHanlderComponent extends BaseComponent implements OnInit {
    * @param data
    */
   private handleDialogRequest(data: DialogRequestInterface): void {
-    const dialogRef = this.dialog.open(DialogComponent, {
+    this.dialog.open(DialogComponent, {
       data: data
     });
   }

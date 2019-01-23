@@ -12,6 +12,8 @@
     "form_field_not_valid": "The required field is not valid",
     "retry": "Retry",
     "close": "Close",
+    "yes": "Yes",
+    "no": "No",
     "server_title": "Web Server",
     "server_down_message": "The server is currently down"
 }
