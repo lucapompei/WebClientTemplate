@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { UserCredentials } from '../../interfaces/user-credentials.interface';
@@ -11,6 +11,7 @@ import { StorageKeys } from '../storage/storageKeys';
 import { HttpService } from '../http/http.service';
 import { HttpRequestInterface } from '../http/http-request.interface';
 import { DialogRequestInterface } from '../../components/common/dialog/dialog-request.interface';
+import { HttpHeaders } from '@angular/common/http';
 
 /**
  * Service used to handle the server APIs
@@ -210,7 +211,7 @@ export class NetworkService {
       };
       this.eventBusService.sendDialogRequest(dialogRequest);
     }
-    return Observable.throw(error);
+    return throwError(error);
   }
 
   /**
@@ -231,9 +232,21 @@ export class NetworkService {
   public isServerAlive(): Observable<boolean> {
     const httpRequest: HttpRequestInterface = {
       mockUrl: 'info/isAlive.json',
-      apiUrl: 'api/info/isAlive',
+      apiUrl: '',
+      observingResponse: true,
+      responseType: 'text'
     };
-    return this.httpService.get(httpRequest);
+    return this.httpService.get(httpRequest)
+      .pipe(
+        map((response: any) => {
+          if (this.areMocksEnabled) {
+            return response.body;
+          } else {
+            // If the server answers with 200 ok then it is available
+            return response.status === 200;
+          }
+        })
+      );
   }
 
 }

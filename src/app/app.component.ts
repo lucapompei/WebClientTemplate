@@ -7,7 +7,7 @@ import { BaseComponent } from './components/base/base.component';
 import { EventBusService } from './services/event-bus/event-bus.service';
 import { RouterService } from './services/router/router.service';
 import { DialogRequestInterface } from './components/common/dialog/dialog-request.interface';
-import { environment } from 'src/environments/environment';
+import { environment } from '../environments/environment';
 
 /**
  * Main application component
