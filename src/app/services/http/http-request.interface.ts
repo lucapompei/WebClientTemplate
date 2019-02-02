@@ -1,3 +1,5 @@
+import { HttpHeaders } from '@angular/common/http';
+
 /**
  * The http request interface
  */
@@ -8,7 +10,7 @@ export interface HttpRequestInterface {
     body?: any;
     observingResponse?: boolean;
     responseType?: string;
-    isPooling?: boolean;
     isForcedMock?: boolean;
+    customHeaders?: HttpHeaders;
 
 }

@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, concat } from 'rxjs';
-import { map, retryWhen, zip } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { map, retryWhen, delay, take, switchMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { HttpRequestInterface } from './http-request.interface';
 
@@ -55,10 +55,14 @@ export class HttpService {
     const options = {};
     if (httpRequest.observingResponse) {
       options['observe'] = 'response';
-    } else if (httpRequest.responseType) {
+    }
+    if (httpRequest.responseType) {
       options['responseType'] = httpRequest.responseType;
     }
-    if (!(httpRequest.body instanceof FormData)) {
+    // Set headers
+    if (httpRequest.customHeaders) {
+      options['headers'] = httpRequest.customHeaders;
+    } else {
       // Defines the base headers
       let applicationHeaders = new HttpHeaders();
       applicationHeaders = applicationHeaders.append('Content-type', 'application/json');
@@ -91,10 +95,11 @@ export class HttpService {
    * @param errors
    */
   private handleErrorsOnRequest(errors: any): Observable<any> {
-    return errors
-      .delay(this.delayBeforeRetryNetworkCall)
-      .take(this.maxNumberOfAttemptForNetworkErrorCall)
-      .switchMap((e: any) => Observable.throw(e));
+    return errors.pipe(
+      delay(this.delayBeforeRetryNetworkCall),
+      take(this.maxNumberOfAttemptForNetworkErrorCall),
+      switchMap((e: any) => throwError(e))
+    );
   }
 
   /**
@@ -104,19 +109,11 @@ export class HttpService {
    */
   public get(httpRequest: HttpRequestInterface): Observable<any> {
     const options = this.getBaseOptions(httpRequest);
-    let observable = this.http.get(
+    const observable = this.http.get(
       this.areMocksEnabled || httpRequest.isForcedMock ?
         this.mockBaseUrl + httpRequest.mockUrl :
         this.apiBaseUrl + httpRequest.apiUrl,
       options);
-    if (httpRequest.isPooling) {
-      /*observable = observable.concat(
-        zip(
-          observable,
-          Observable.interval(5000),
-          (item, interval) => item).repeat()
-      );*/
-    }
     return observable
       .pipe(
         retryWhen((errors: any) => this.handleErrorsOnRequest(errors)),

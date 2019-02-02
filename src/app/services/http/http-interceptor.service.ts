@@ -18,13 +18,13 @@ export class HttpInterceptorService implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return this.networkService.getAuthenticationToken()
             .pipe(
-                flatMap((response: any) => {
-                    if (response == null) {
+                flatMap((token: string) => {
+                    if (token == null) {
                         return next.handle(request);
                     } else {
                         request = request.clone({
                             setHeaders: {
-                                Authorization: `${response}`
+                                Authorization: `${token}`
                             }
                         });
                         return next.handle(request);
