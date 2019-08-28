@@ -170,6 +170,30 @@ export class HttpService {
   }
 
   /**
+   * Returns an observable built on a PATCH request
+   *
+   * @param httpRequest
+   */
+  public patch(httpRequest: HttpRequestInterface): Observable<any> {
+    const options = this.getBaseOptions(httpRequest);
+    const observable = this.areMocksEnabled || httpRequest.isForcedMock ?
+      this.http.get(
+        this.mockBaseUrl + httpRequest.mockUrl,
+        options
+      ) :
+      this.http.patch(
+        this.apiBaseUrl + httpRequest.apiUrl,
+        httpRequest.body,
+        options
+      );
+    return observable
+      .pipe(
+        retryWhen((errors: any) => this.handleErrorsOnRequest(errors)),
+        map((response: any) => this.getBaseProjection(response))
+      );
+  }
+
+  /**
    * Returns an observable built on a DELETE request
    *
    * @param httpRequest
