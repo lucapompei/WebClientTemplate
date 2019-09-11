@@ -41,7 +41,12 @@ export class HttpService {
   ) {
     // Initializes the service on the base of the environment
     this.areMocksEnabled = environment.areMocksEnabled;
-    this.apiBaseUrl = window.location.protocol + '//' + window.location.hostname + environment.apiPort;
+    if (environment.apiBaseUrl && environment.apiBaseUrl != '') {
+      this.apiBaseUrl = environment.apiBaseUrl;
+    } else {
+      this.apiBaseUrl = window.location.protocol + '//' + window.location.hostname
+    }
+    this.apiBaseUrl += environment.apiPort;
     this.delayBeforeRetryNetworkCall = environment.delayBeforeRetryNetworkCall;
     this.maxNumberOfAttemptForNetworkErrorCall = environment.maxNumberOfAttemptForNetworkErrorCall;
   }
