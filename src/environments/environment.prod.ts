@@ -2,6 +2,7 @@ import { LogLevelEnum } from '../app/services/logger/log-level-enum';
 
 /**
  
+  production: a boolean indicating if the current environment is the production one
   appVersion: the application version number
   logLevel: the log level
   storageSecretKey: the key to use to encrypt storage
@@ -17,6 +18,7 @@ import { LogLevelEnum } from '../app/services/logger/log-level-enum';
  */
 
 export const environment = {
+  production: true,
   appVersion: require('../../package.json').version,
   logLevel: LogLevelEnum.INFO,
   storageSecretKey: 'WebClientTemplateSecretKey',
