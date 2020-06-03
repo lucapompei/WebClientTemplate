@@ -1,7 +1,7 @@
 ### STAGE 1: Build ###
 
 # We label our stage as 'builder'
-FROM node:8.16.0-alpine as builder
+FROM node:14.4.0-alpine3.10 as builder
 
 COPY package*.json ./
 
@@ -20,7 +20,7 @@ RUN cd /web-app && npm run build --prod --aot
 
 ### STAGE 2: Setup ###
 
-FROM nginx:1.17-alpine
+FROM nginx:1.19.0-alpine
 
 ## Copy our default nginx config
 COPY nginx.conf /etc/nginx/nginx.conf
