@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { BaseComponent } from '../../base/base.component';
 import { DialogRequestInterface } from './dialog-request.interface';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 /**
  * The centralized dialog component

@@ -3,7 +3,7 @@ import { LoggerService } from '../../../services/logger/logger.service';
 import { EventBusService } from '../../../services/event-bus/event-bus.service';
 import { BaseComponent } from '../../base/base.component';
 import { DialogRequestInterface } from './dialog-request.interface';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { DialogComponent } from './dialog.component';
 
 /**
