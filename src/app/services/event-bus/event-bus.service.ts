@@ -1,9 +1,10 @@
-import { Injectable, Output, EventEmitter } from '@angular/core';
+import { Injectable, Output, EventEmitter, Directive } from '@angular/core';
 import { DialogRequestInterface } from '../../components/common/dialog/dialog-request.interface';
 
 /**
  * Service used to handle the event bus
  */
+@Directive()
 @Injectable()
 export class EventBusService {
 

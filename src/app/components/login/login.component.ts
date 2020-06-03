@@ -26,7 +26,7 @@ export class LoginComponent extends BaseComponent implements OnInit, OnDestroy {
   /**
    * The login form
    */
-  @ContentChild('loginForm', { static: false }) loginForm: FormComponent;
+  @ContentChild('loginForm') loginForm: FormComponent;
 
   constructor(
     private networkService: NetworkService,
