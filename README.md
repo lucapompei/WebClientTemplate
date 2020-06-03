@@ -1,16 +1,16 @@
-# Web Client Template v.2.3.0
+# Web Client Template v.2.4.0
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 =============================
 
-This project represents a generic web client template based on Angular v.7 Framework.
+This project represents a generic web client template based on Angular v.9 Framework.
 
 
 Summary features
 -------
 
-- Project based on Angular v.7 Framework;
+- Project based on Angular v.9 Framework;
 - Angular Material Module configuration;
 - Routing Module configuration;
 - Language translation Module configuration;
@@ -34,7 +34,7 @@ Clone or download the Angular project and start its customization.
 License
 -------
 
-  Copyright (C) 2019 lucapompei
+  Copyright (C) 2020 lucapompei
  
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
