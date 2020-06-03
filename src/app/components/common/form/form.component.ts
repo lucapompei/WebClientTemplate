@@ -157,7 +157,7 @@ export class FormComponent extends BaseComponent implements OnInit, OnDestroy {
   public resetFormFields(): void {
     const listSize = this.fields.length;
     for (let index = 0; index < listSize; index++) {
-        this.fields[index].value = null;
+      this.fields[index].value = null;
     }
   }
 

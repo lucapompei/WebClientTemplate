@@ -11,7 +11,6 @@ import { StorageKeys } from '../storage/storageKeys';
 import { HttpService } from '../http/http.service';
 import { HttpRequestInterface } from '../http/http-request.interface';
 import { DialogRequestInterface } from '../../components/common/dialog/dialog-request.interface';
-import { HttpHeaders } from '@angular/common/http';
 
 /**
  * Service used to handle the server APIs

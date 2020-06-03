@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { LoggerService } from '../../../services/logger/logger.service';
 import { EventBusService } from '../../../services/event-bus/event-bus.service';
 import { BaseComponent } from '../../base/base.component';
