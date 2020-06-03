@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ContentChild } from '@angular/core';
 import { BaseComponent } from '../base/base.component';
 import { LoggerService } from '../../services/logger/logger.service';
 import { FieldInterface } from '../common/form/field.interface';
@@ -26,7 +26,7 @@ export class LoginComponent extends BaseComponent implements OnInit, OnDestroy {
   /**
    * The login form
    */
-  @ViewChild('loginForm') loginForm: FormComponent;
+  @ContentChild('loginForm', { static: false }) loginForm: FormComponent;
 
   constructor(
     private networkService: NetworkService,
