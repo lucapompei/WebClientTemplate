@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/lucapompei/WebClientTemplate.svg?branch=master)](https://travis-ci.org/lucapompei/WebClientTemplate)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![CodeFactor](https://www.codefactor.io/repository/github/lucapompei/webclienttemplate/badge/master)](https://www.codefactor.io/repository/github/lucapompei/webclienttemplate/overview/master)
 
 =============================
 
