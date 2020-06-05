@@ -1,6 +1,6 @@
 # Web Client Template v.2.4.0
 
-[![Build Status](https://travis-ci.org/lucapompei/WebClientTemplate.svg?branch=master)](https://travis-ci.org/lucapompei/WebClientTemplate.svg?branch=master)
+[![Build Status](https://travis-ci.org/lucapompei/WebClientTemplate.svg?branch=master)](https://travis-ci.org/lucapompei/WebClientTemplate)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 =============================
