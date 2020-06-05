@@ -41,7 +41,7 @@ export class HttpService {
   ) {
     // Initializes the service on the base of the environment
     this.areMocksEnabled = environment.areMocksEnabled;
-    if (environment.apiBaseUrl && environment.apiBaseUrl != '') {
+    if (environment.apiBaseUrl && environment.apiBaseUrl !== '') {
       this.apiBaseUrl = environment.apiBaseUrl;
     } else {
       this.apiBaseUrl = window.location.protocol + '//' + window.location.hostname

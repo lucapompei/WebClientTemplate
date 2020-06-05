@@ -6,7 +6,7 @@ import { LogLevelEnum } from '../app/services/logger/log-level-enum';
 // The list of which env maps to which file can be found in `angular.json`.
 
 /**
- 
+
   production: a boolean indicating if the current environment is the production one
   appVersion: the application version number
   logLevel: the log level
