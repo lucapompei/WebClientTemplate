@@ -44,7 +44,7 @@ export class HttpService {
     if (environment.apiBaseUrl && environment.apiBaseUrl !== '') {
       this.apiBaseUrl = environment.apiBaseUrl;
     } else {
-      this.apiBaseUrl = window.location.protocol + '//' + window.location.hostname
+      this.apiBaseUrl = window.location.protocol + '//' + window.location.hostname;
     }
     this.apiBaseUrl += environment.apiPort;
     this.delayBeforeRetryNetworkCall = environment.delayBeforeRetryNetworkCall;
