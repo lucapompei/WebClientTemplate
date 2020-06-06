@@ -97,7 +97,7 @@ export class HttpService {
   }
 
   /**
-   * Handles etag header providing client cache 
+   * Handles etag header providing client cache
    * and return the cached data to use if cache is valid
    *
    * @param httpRequest
