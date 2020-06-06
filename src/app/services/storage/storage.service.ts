@@ -32,14 +32,16 @@ export class StorageService {
    * @param storageType
    */
   public store(key: string, value: any, storageType: StorageTypeEnum): void {
-    const encryptedValue = this.encryptObject(value);
-    this.loggerService.debug(
-      '[' + StorageTypeEnum[storageType] + '] Saving object '
-      + key +
-      ' on the storage.',
-      encryptedValue
-    );
-    this.getStorage(storageType).setItem(key, encryptedValue);
+    if (key && key !== '') {
+      const encryptedValue = this.encryptObject(value);
+      this.loggerService.debug(
+        '[' + StorageTypeEnum[storageType] + '] Saving object '
+        + key +
+        ' on the storage.',
+        encryptedValue
+      );
+      this.getStorage(storageType).setItem(key, encryptedValue);
+    }
   }
 
   /**
@@ -62,17 +64,18 @@ export class StorageService {
    * @param storageType
    */
   public retrieveOrGetDefault(key: string, defaultValue: any, storageType: StorageTypeEnum): any {
-    this.loggerService.debug(
-      '[' + StorageTypeEnum[storageType] + '] Retrieving object '
-      + key +
-      ' from the storage. If it\'s missing, a default value will be returned.',
-      + JSON.stringify(defaultValue) + '.');
-    const encryptedValue = this.getStorage(storageType).getItem(key);
-    if (encryptedValue) {
-      return this.decryptObject(encryptedValue, defaultValue);
-    } else {
-      return defaultValue;
+    if (key && key !== '') {
+      this.loggerService.debug(
+        '[' + StorageTypeEnum[storageType] + '] Retrieving object '
+        + key +
+        ' from the storage. If it\'s missing, a default value will be returned.',
+        + JSON.stringify(defaultValue) + '.');
+      const encryptedValue = this.getStorage(storageType).getItem(key);
+      if (encryptedValue) {
+        return this.decryptObject(encryptedValue, defaultValue);
+      }
     }
+    return defaultValue;
   }
 
   /**
@@ -83,11 +86,13 @@ export class StorageService {
    * @param storageType
    */
   public remove(key: string, storageType: StorageTypeEnum): void {
-    this.loggerService.debug(
-      '[' + StorageTypeEnum[storageType] + '] Removing object '
-      + key +
-      ' from the storage.');
-    this.getStorage(storageType).removeItem(key);
+    if (key && key !== '') {
+      this.loggerService.debug(
+        '[' + StorageTypeEnum[storageType] + '] Removing object '
+        + key +
+        ' from the storage.');
+      this.getStorage(storageType).removeItem(key);
+    }
   }
 
   /**
