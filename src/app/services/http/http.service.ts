@@ -1,9 +1,12 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
-import { map, retryWhen, delay, take, switchMap } from 'rxjs/operators';
+import { Observable, throwError, of, empty } from 'rxjs';
+import { map, retryWhen, delay, take, switchMap, catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { HttpRequestInterface } from './http-request.interface';
+import { BaseCachedData } from '../../interfaces/base-cached-data.interface';
+import { StorageService } from '../storage/storage.service';
+import { StorageTypeEnum } from '../storage/storage-type.enum';
 
 /**
  * Service used to handle each http request
@@ -37,7 +40,8 @@ export class HttpService {
   private maxNumberOfAttemptForNetworkErrorCall = 3;
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private storageService: StorageService
   ) {
     // Initializes the service on the base of the environment
     this.areMocksEnabled = environment.areMocksEnabled;
@@ -93,6 +97,25 @@ export class HttpService {
   }
 
   /**
+   * Handles etag header providing client cache 
+   * and return the cached data to use if cache is valid
+   *
+   * @param httpRequest
+   * @param options
+   */
+  private handleEtagAndGetCachedData(httpRequest: HttpRequestInterface, options: any): Observable<BaseCachedData> {
+    if (!httpRequest.ignoringCache) {
+      // Get cached data from storage, using the api url as cached data identifier, if it exists
+      const cachedData: BaseCachedData = this.storageService.retrieveOrGetDefault(httpRequest.apiUrl, null, StorageTypeEnum.LOCAL_STORAGE);
+      if (cachedData && cachedData.data) {
+        options['headers'] = options['headers'].append('If-None-Match', cachedData.etag);
+        return of(cachedData.data);
+      }
+    }
+    return empty();
+  }
+
+  /**
    * Handles generic errors during network requests.
    * It waits for a fixed delay before retry and
    * if in the worst case throw the error
@@ -114,6 +137,7 @@ export class HttpService {
    */
   public get(httpRequest: HttpRequestInterface): Observable<any> {
     const options = this.getBaseOptions(httpRequest);
+    const cachedData = this.handleEtagAndGetCachedData(httpRequest, options);
     const observable = this.http.get(
       this.areMocksEnabled || httpRequest.isForcedMock ?
         this.mockBaseUrl + httpRequest.mockUrl :
@@ -122,7 +146,18 @@ export class HttpService {
     return observable
       .pipe(
         retryWhen((errors: any) => this.handleErrorsOnRequest(errors)),
-        map((response: any) => this.getBaseProjection(response))
+        map((response: any) => {
+          const data = this.getBaseProjection(response);
+          // Cache result and its etag reference, if it exists
+          const etag = response.headers.get('ETag');
+          if (etag != null) {
+            const updatedCachedData: BaseCachedData = { etag, data };
+            this.storageService.store(httpRequest.apiUrl, updatedCachedData, StorageTypeEnum.LOCAL_STORAGE);
+          }
+          // Return response with the base projection applied
+          return data;
+        }),
+        catchError((error: any) => error && error.stauts === 304 ? cachedData : throwError(error))
       );
   }
 
