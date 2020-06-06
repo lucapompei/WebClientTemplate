@@ -1,4 +1,4 @@
-# Web Client Template v.2.4.0
+# Web Client Template v.2.5.0
 
 [![Build Status](https://travis-ci.org/lucapompei/WebClientTemplate.svg?branch=master)](https://travis-ci.org/lucapompei/WebClientTemplate)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -18,7 +18,7 @@ Summary features
 - Language translation Module configuration;
 - PreLogin e PostLogin Guards configuration;
 - Jwt Authentication configuration;
-- Base HttpService Service configuration;
+- Base HttpService Service configuration with cache mechanisms (i.e. etag handling) and automatic retry option;
 - Base NetworkService Service configuration;
 - Base EventBusService Service configuration;
 - Base StorageService Service configuration;
