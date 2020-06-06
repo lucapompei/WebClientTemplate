@@ -12,5 +12,6 @@ export interface HttpRequestInterface {
     responseType?: string;
     isForcedMock?: boolean;
     customHeaders?: HttpHeaders;
+    ignoringCache?: boolean;
 
 }
