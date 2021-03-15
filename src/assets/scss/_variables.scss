@@ -1,0 +1,55 @@
+$white: #ffffff;
+
+/* Background */
+$bg-primary: #fcfcfcc9;
+
+$ok_green: #00ae65;
+$ko_red: #c93f3f;
+$running_yellow: #ffc300;
+
+/* Typhography */
+
+$typography-menu-primary: #000000;
+
+$color-green-light: #00ae65;
+$color-green-light-hover: #009c5a;
+$color-green-dark: #005157;
+$color-white: #ffffff;
+$color-orange: #e37222;
+$color-orange-hover: #cb661e;
+$color-turquoise-light: #00a09a;
+$color-turquoise-light-hover: #008f8a;
+$color-turquoise-dark: #005157;
+
+$color-warm-gray-1: #e0ded8;
+$color-warm-gray-3: #c7c2ba;
+$color-warm-gray-5: #aea79f;
+$color-warm-gray-7: #988f86;
+$color-warm-gray-9: #82786f;
+
+$dalavorare: #00ae65;
+$invalidazione: #aea79f;
+$inlavorazione: #2b747f;
+$inbozza: #c7c2ba;
+$finalizzate: #00a09a;
+$archiviate: #82786f;
+$nonvalide: #e37222;
+$scartate: #b82d0b;
+
+$typograpy-color-secondary: #00a09a;
+
+$typography-bozza: #c7c2ba;
+$typography-inlavorazione: #2b747f;
+$typography-dalavorare: #00ae65;
+$typography-finalizzate: #00a09a;
+$typography-archiviate: #82786f;
+$typography-invalidazione: #aea79f;
+
+/* Form field*/
+$select-arrow-color: #005157;
+
+$breakpoints: (
+  "small": 320px,
+  "medium": 920px,
+  "large": 1440px,
+);

@@ -9,7 +9,7 @@ import { BaseComponent } from '../../base/base.component';
 @Component({
   selector: 'app-loader',
   templateUrl: './loader.component.html',
-  styleUrls: ['./loader.component.css']
+  styleUrls: ['./loader.component.scss']
 })
 export class LoaderComponent extends BaseComponent implements OnInit, OnDestroy {
 

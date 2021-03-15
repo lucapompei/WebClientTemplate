@@ -1,9 +1,10 @@
-import { OnInit, OnDestroy } from '@angular/core';
+import { OnInit, OnDestroy, Directive } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 /**
  * Base component for each other component in the application
  */
+@Directive()
 export class BaseComponent implements OnInit, OnDestroy {
 
   /**

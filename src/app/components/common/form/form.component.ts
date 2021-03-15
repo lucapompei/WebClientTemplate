@@ -9,7 +9,7 @@ import { FieldTypeEnum } from './field-type.enum';
 @Component({
   selector: 'app-form',
   templateUrl: './form.component.html',
-  styleUrls: ['./form.component.css']
+  styleUrls: ['./form.component.scss']
 })
 export class FormComponent extends BaseComponent implements OnInit, OnDestroy {
 

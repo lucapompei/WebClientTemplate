@@ -1,4 +1,4 @@
-import { BrowserModule, HammerModule } from '@angular/platform-browser';
+import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -51,7 +51,6 @@ import { HomeComponent } from './components/home/home.component';
     AppMaterialModule,
     AppRoutingModule,
     AppTranslateModule,
-    HammerModule
   ],
   providers: [
     EventBusService,
